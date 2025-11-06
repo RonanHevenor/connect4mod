@@ -63,16 +63,6 @@ const player2Status = document.getElementById('player2-status');
 const player1DisplayName = document.getElementById('player1-display-name');
 const player2DisplayName = document.getElementById('player2-display-name');
 
-// DOM Elements - Tournament (old bar - now used in game screen)
-const tournamentBar = document.getElementById('tournament-bar');
-const electionLeft = document.getElementById('election-left');
-const electionRight = document.getElementById('election-right');
-const electionLeftPercent = document.getElementById('election-left-percent');
-const electionRightPercent = document.getElementById('election-right-percent');
-const tournamentProgress = document.getElementById('tournament-progress');
-const player1Balls = document.getElementById('player1-balls');
-const player2Balls = document.getElementById('player2-balls');
-
 // DOM Elements - Tournament Screen
 const tournamentPlayer1Name = document.getElementById('tournament-player1-name');
 const tournamentPlayer2Name = document.getElementById('tournament-player2-name');
