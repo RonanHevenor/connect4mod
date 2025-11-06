@@ -8,15 +8,12 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     background: #f5f5f5;
     color: #333;
-    line-height: 1.6;
-    padding: 20px;
+    line-height: 1.4;
     overflow: hidden;
 }
 
 .container {
-    max-width: 1400px;
-    margin: 0 auto;
-    height: calc(100vh - 40px);
+    height: 100vh;
     display: flex;
     flex-direction: column;
 }
@@ -30,31 +27,13 @@ body {
 .screen.active {
     display: flex;
     flex-direction: column;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Header */
-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.title {
-    font-size: 1.5em;
-    font-weight: 300;
-    color: #333;
-    letter-spacing: -0.5px;
 }
 
 /* Configuration Screen */
 #config-screen {
     justify-content: center;
     align-items: center;
+    padding: 20px;
 }
 
 .config-panel {
@@ -64,7 +43,7 @@ header {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     max-width: 700px;
     width: 100%;
-    max-height: 80vh;
+    max-height: 90vh;
     overflow-y: auto;
 }
 
@@ -156,6 +135,8 @@ header {
     background: #fff;
     color: #333;
     border: 1px solid #ddd;
+    font-size: 0.85em;
+    padding: 8px 16px;
 }
 
 .btn-secondary:hover {
@@ -167,57 +148,76 @@ header {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 15px;
 }
 
-/* Scoreboard */
+/* Compact Header */
+header {
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.title {
+    font-size: 1.2em;
+    font-weight: 400;
+    color: #333;
+}
+
+/* Scoreboard in Header */
 .scoreboard {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 15px 30px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    gap: 40px;
 }
 
 .player-info {
-    flex: 1;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .player-name {
-    font-size: 1em;
+    font-size: 0.95em;
     font-weight: 500;
     color: #333;
-    margin-bottom: 5px;
 }
 
 .player-status {
-    font-size: 0.85em;
+    font-size: 0.8em;
     color: #999;
+    background: #f5f5f5;
+    padding: 3px 10px;
+    border-radius: 12px;
+}
+
+.player-info.active .player-status {
+    background: #333;
+    color: #fff;
 }
 
 .vs {
-    font-size: 0.75em;
+    font-size: 0.7em;
     color: #ccc;
     font-weight: 300;
     text-transform: uppercase;
     letter-spacing: 2px;
-    padding: 0 20px;
 }
 
 /* Main Content Area */
 .game-main {
-    display: flex;
-    gap: 20px;
     flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 20px;
+    padding: 20px;
     min-height: 0;
 }
 
 /* Game Board */
 .game-board-container {
-    flex: 0 0 auto;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -225,9 +225,9 @@ header {
 
 .game-board {
     background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     display: inline-block;
 }
 
@@ -236,10 +236,10 @@ header {
 }
 
 .cell {
-    width: 70px;
-    height: 70px;
-    margin: 4px;
-    background: #f5f5f5;
+    width: 75px;
+    height: 75px;
+    margin: 5px;
+    background: #f8f8f8;
     border-radius: 50%;
     position: relative;
     transition: background 0.2s;
@@ -251,10 +251,10 @@ header {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
-    width: 80%;
-    height: 80%;
+    width: 82%;
+    height: 82%;
     border-radius: 50%;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .cell.player1::before {
@@ -269,25 +269,26 @@ header {
 
 /* Sidebar */
 .game-sidebar {
-    flex: 0 1 300px;
     display: flex;
     flex-direction: column;
     gap: 15px;
-    min-width: 250px;
 }
 
 /* Game Info */
 .game-info {
-    display: flex;
-    gap: 20px;
-    padding: 15px;
     background: #fff;
     border-radius: 8px;
+    padding: 20px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
 .info-item {
-    flex: 1;
     text-align: center;
 }
 
@@ -295,32 +296,27 @@ header {
     display: block;
     font-size: 0.75em;
     color: #999;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 .info-value {
     display: block;
-    font-size: 1.3em;
+    font-size: 1.8em;
     font-weight: 300;
     color: #333;
 }
 
 /* Game Controls */
 .game-controls {
-    display: flex;
-    gap: 8px;
-    padding: 15px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
     background: #fff;
     border-radius: 8px;
+    padding: 15px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.game-controls .btn {
-    flex: 1;
-    padding: 8px 16px;
-    font-size: 0.85em;
 }
 
 /* Move History */
@@ -338,7 +334,7 @@ header {
 .move-history-title {
     font-size: 0.75em;
     color: #999;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -346,28 +342,28 @@ header {
 .move-history {
     flex: 1;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 6px;
     overflow-y: auto;
-    align-content: flex-start;
 }
 
 .move-item {
-    background: #f5f5f5;
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-size: 0.8em;
+    background: #f8f8f8;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85em;
     color: #666;
-    white-space: nowrap;
-    height: fit-content;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .move-item.player1 {
-    border-left: 2px solid #FF6B6B;
+    border-left: 3px solid #FF6B6B;
 }
 
 .move-item.player2 {
-    border-left: 2px solid #4ECDC4;
+    border-left: 3px solid #4ECDC4;
 }
 
 /* Scrollbar */
@@ -376,8 +372,7 @@ header {
 }
 
 .move-history::-webkit-scrollbar-track {
-    background: #f5f5f5;
-    border-radius: 2px;
+    background: transparent;
 }
 
 .move-history::-webkit-scrollbar-thumb {
@@ -389,67 +384,47 @@ header {
     background: #ccc;
 }
 
-/* Active Player Indicator */
-.scoreboard .player-info.active .player-name {
-    color: #000;
-    font-weight: 600;
-}
-
-.scoreboard .player-info.active .player-status {
-    color: #666;
-}
-
 /* Responsive */
+@media (max-width: 1400px) {
+    .cell {
+        width: 65px;
+        height: 65px;
+        margin: 4px;
+    }
+
+    .game-board {
+        padding: 20px;
+    }
+
+    .game-main {
+        grid-template-columns: 1fr 280px;
+    }
+}
+
 @media (max-width: 1200px) {
     .cell {
-        width: 60px;
-        height: 60px;
+        width: 55px;
+        height: 55px;
         margin: 3px;
     }
 
     .game-board {
-        padding: 18px;
+        padding: 15px;
     }
 }
 
 @media (max-width: 900px) {
     .game-main {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
     }
 
     .game-sidebar {
-        min-width: auto;
+        flex-direction: row;
+        gap: 10px;
     }
 
-    .cell {
-        width: 50px;
-        height: 50px;
-    }
-}
-
-@media (max-width: 600px) {
-    body {
-        padding: 10px;
-    }
-
-    .container {
-        height: calc(100vh - 20px);
-    }
-
-    header {
-        margin-bottom: 10px;
-    }
-
-    .title {
-        font-size: 1.2em;
-    }
-
-    .scoreboard {
-        padding: 10px 15px;
-    }
-
-    .cell {
-        width: 35px;
-        height: 35px;
+    .move-history-container {
+        flex: 1;
     }
 }

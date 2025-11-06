@@ -10,11 +10,9 @@
     <div class="container">
         <!-- Configuration Screen -->
         <div id="config-screen" class="screen active">
-            <header>
-                <h1 class="title">Connect 4 AI Battle</h1>
-            </header>
-
             <div class="config-panel">
+                <h1 class="title" style="text-align: center; margin-bottom: 30px;">Connect 4 AI Battle</h1>
+
                 <div class="config-section">
                     <h3>Player 1</h3>
                     <div class="input-group">
@@ -65,21 +63,18 @@
         <div id="game-screen" class="screen">
             <header>
                 <h1 class="title">Connect 4 AI Battle</h1>
+                <div class="scoreboard">
+                    <div class="player-info">
+                        <div class="player-name" id="player1-display-name">Random AI</div>
+                        <div class="player-status" id="player1-status">Waiting</div>
+                    </div>
+                    <div class="vs">vs</div>
+                    <div class="player-info">
+                        <div class="player-name" id="player2-display-name">Minimax AI</div>
+                        <div class="player-status" id="player2-status">Waiting</div>
+                    </div>
+                </div>
             </header>
-
-            <div class="scoreboard">
-                <div class="player-info">
-                    <div class="player-name" id="player1-display-name">Random AI</div>
-                    <div class="player-status" id="player1-status">Waiting</div>
-                </div>
-
-                <div class="vs">vs</div>
-
-                <div class="player-info">
-                    <div class="player-name" id="player2-display-name">Minimax AI</div>
-                    <div class="player-status" id="player2-status">Waiting</div>
-                </div>
-            </div>
 
             <div class="game-main">
                 <div class="game-board-container">
@@ -88,20 +83,22 @@
 
                 <div class="game-sidebar">
                     <div class="game-info">
-                        <div class="info-item">
-                            <span class="info-label">Status</span>
-                            <span id="game-status" class="info-value">Ready</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Moves</span>
-                            <span id="move-count" class="info-value">0</span>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Status</span>
+                                <span id="game-status" class="info-value">Ready</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Moves</span>
+                                <span id="move-count" class="info-value">0</span>
+                            </div>
                         </div>
                     </div>
 
                     <div class="game-controls">
-                        <button id="new-game-btn" class="btn btn-secondary">New Game</button>
+                        <button id="new-game-btn" class="btn btn-secondary">New</button>
                         <button id="reset-btn" class="btn btn-secondary">Reset</button>
-                        <button id="back-config-btn" class="btn btn-secondary">Configure</button>
+                        <button id="back-config-btn" class="btn btn-secondary">Config</button>
                     </div>
 
                     <div class="move-history-container">
