@@ -110,6 +110,58 @@ body {
     padding-top: 15px;
 }
 
+/* Mode Selector */
+.mode-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mode-option {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mode-option:hover {
+    border-color: #333;
+    background: #f9f9f9;
+}
+
+.mode-option input[type="radio"] {
+    display: none;
+}
+
+.mode-option input[type="radio"]:checked + .mode-label {
+    color: #333;
+    font-weight: 600;
+}
+
+.mode-option input[type="radio"]:checked ~ .mode-label {
+    color: #333;
+}
+
+.mode-option:has(input[type="radio"]:checked) {
+    border-color: #333;
+    background: #f9f9f9;
+}
+
+.mode-label {
+    font-size: 1em;
+    font-weight: 500;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.mode-desc {
+    font-size: 0.85em;
+    color: #999;
+}
+
 /* Buttons */
 .btn {
     padding: 10px 24px;
@@ -166,6 +218,71 @@ header {
     color: #333;
 }
 
+/* Tournament Bar */
+.tournament-bar {
+    padding: 10px 20px;
+    background: #f8f8f8;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.election-container {
+    flex: 1;
+    max-width: 600px;
+}
+
+.election-bar {
+    height: 30px;
+    background: #000;
+    border-radius: 15px;
+    overflow: hidden;
+    display: flex;
+    position: relative;
+}
+
+.election-left {
+    background: #FF6B6B;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+    transition: width 0.5s ease;
+    width: 0%;
+}
+
+.election-right {
+    background: #4ECDC4;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 10px;
+    transition: width 0.5s ease;
+    width: 0%;
+}
+
+.election-center {
+    width: 2px;
+    background: #000;
+    height: 100%;
+}
+
+.election-percent {
+    font-size: 0.75em;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.tournament-info {
+    font-size: 0.85em;
+    color: #666;
+    font-weight: 500;
+}
+
 /* Scoreboard in Header */
 .scoreboard {
     display: flex;
@@ -175,8 +292,9 @@ header {
 
 .player-info {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .player-name {
@@ -196,6 +314,34 @@ header {
 .player-info.active .player-status {
     background: #333;
     color: #fff;
+}
+
+/* Ball Pit */
+.ball-pit {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    min-height: 20px;
+    justify-content: center;
+    max-width: 200px;
+}
+
+.ball {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    animation: ballDrop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes ballDrop {
+    0% {
+        transform: translateY(-20px) scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
 }
 
 .vs {

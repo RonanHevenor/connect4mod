@@ -13,7 +13,22 @@ let config = {
         url: 'http://localhost:5002/move',
         color: '#4ECDC4'
     },
-    moveDelay: 1.5
+    moveDelay: 1.5,
+    mode: 'single',
+    numGames: 10,
+    gameInterval: 3
+};
+
+// Tournament state
+let tournamentState = {
+    active: false,
+    currentGame: 0,
+    totalGames: 0,
+    wins: {
+        player1: 0,
+        player2: 0,
+        draws: 0
+    }
 };
 
 // DOM Elements - Screens
@@ -29,6 +44,10 @@ const player2UrlInput = document.getElementById('player2-url');
 const player2NameInput = document.getElementById('player2-name');
 const player2ColorInput = document.getElementById('player2-color');
 const moveDelayInput = document.getElementById('move-delay');
+const modeRadios = document.querySelectorAll('input[name="game-mode"]');
+const tournamentSettingsSection = document.getElementById('tournament-settings');
+const numGamesInput = document.getElementById('num-games');
+const gameIntervalInput = document.getElementById('game-interval');
 
 // DOM Elements - Game
 const gameBoard = document.getElementById('game-board');
@@ -42,6 +61,16 @@ const player1Status = document.getElementById('player1-status');
 const player2Status = document.getElementById('player2-status');
 const player1DisplayName = document.getElementById('player1-display-name');
 const player2DisplayName = document.getElementById('player2-display-name');
+
+// DOM Elements - Tournament
+const tournamentBar = document.getElementById('tournament-bar');
+const electionLeft = document.getElementById('election-left');
+const electionRight = document.getElementById('election-right');
+const electionLeftPercent = document.getElementById('election-left-percent');
+const electionRightPercent = document.getElementById('election-right-percent');
+const tournamentProgress = document.getElementById('tournament-progress');
+const player1Balls = document.getElementById('player1-balls');
+const player2Balls = document.getElementById('player2-balls');
 
 // Screen Management
 function showConfigScreen() {
@@ -67,6 +96,16 @@ function saveConfig() {
 
     config.moveDelay = parseFloat(moveDelayInput.value);
 
+    // Get mode
+    const selectedMode = document.querySelector('input[name="game-mode"]:checked').value;
+    config.mode = selectedMode;
+
+    // Get tournament settings if tournament mode
+    if (selectedMode === 'tournament') {
+        config.numGames = parseInt(numGamesInput.value);
+        config.gameInterval = parseFloat(gameIntervalInput.value);
+    }
+
     // Update display names on game screen
     player1DisplayName.textContent = config.player1.name;
     player2DisplayName.textContent = config.player2.name;
@@ -91,8 +130,115 @@ function updatePlayerColors() {
         }
         .move-item.player1 { border-left-color: ${config.player1.color} !important; }
         .move-item.player2 { border-left-color: ${config.player2.color} !important; }
+        .election-left { background: ${config.player1.color} !important; }
+        .election-right { background: ${config.player2.color} !important; }
     `;
     document.head.appendChild(style);
+}
+
+// Tournament Functions
+function initTournament() {
+    tournamentState.active = true;
+    tournamentState.currentGame = 0;
+    tournamentState.totalGames = config.numGames;
+    tournamentState.wins.player1 = 0;
+    tournamentState.wins.player2 = 0;
+    tournamentState.wins.draws = 0;
+
+    // Show tournament bar
+    tournamentBar.style.display = 'flex';
+
+    // Clear ball pits
+    player1Balls.innerHTML = '';
+    player2Balls.innerHTML = '';
+
+    // Reset election bar
+    updateElectionBar();
+    updateTournamentProgress();
+}
+
+function addBallToPit(player) {
+    const ball = document.createElement('div');
+    ball.className = 'ball';
+    ball.style.background = player === 1 ? config.player1.color : config.player2.color;
+
+    if (player === 1) {
+        player1Balls.appendChild(ball);
+    } else {
+        player2Balls.appendChild(ball);
+    }
+}
+
+function updateElectionBar() {
+    const total = tournamentState.wins.player1 + tournamentState.wins.player2 + tournamentState.wins.draws;
+    if (total === 0) {
+        electionLeft.style.width = '0%';
+        electionRight.style.width = '0%';
+        electionLeftPercent.textContent = '0%';
+        electionRightPercent.textContent = '0%';
+        return;
+    }
+
+    const player1Percent = (tournamentState.wins.player1 / total) * 100;
+    const player2Percent = (tournamentState.wins.player2 / total) * 100;
+
+    electionLeft.style.width = player1Percent + '%';
+    electionRight.style.width = player2Percent + '%';
+    electionLeftPercent.textContent = Math.round(player1Percent) + '%';
+    electionRightPercent.textContent = Math.round(player2Percent) + '%';
+}
+
+function updateTournamentProgress() {
+    tournamentProgress.textContent = `Game ${tournamentState.currentGame} of ${tournamentState.totalGames}`;
+}
+
+async function runTournament() {
+    initTournament();
+
+    for (let i = 1; i <= config.numGames; i++) {
+        tournamentState.currentGame = i;
+        updateTournamentProgress();
+
+        // Start game
+        await startGame();
+
+        // Wait for game to complete
+        await waitForGameComplete();
+
+        // Record result
+        if (gameState.winner === 1) {
+            tournamentState.wins.player1++;
+            addBallToPit(1);
+        } else if (gameState.winner === 2) {
+            tournamentState.wins.player2++;
+            addBallToPit(2);
+        } else {
+            tournamentState.wins.draws++;
+        }
+
+        // Update election bar
+        updateElectionBar();
+
+        // Wait interval before next game (except on last game)
+        if (i < config.numGames) {
+            await new Promise(resolve => setTimeout(resolve, config.gameInterval * 1000));
+        }
+    }
+
+    // Tournament complete
+    tournamentState.active = false;
+    gameStatus.textContent = 'Tournament Complete';
+}
+
+function waitForGameComplete() {
+    return new Promise((resolve) => {
+        const checkInterval = setInterval(() => {
+            if (gameState && gameState.game_over) {
+                clearInterval(checkInterval);
+                resolve();
+            }
+        }, 500);
+    });
 }
 
 // Helper function to adjust color brightness
@@ -293,8 +439,12 @@ async function startBattle() {
         // Initialize board
         initBoard();
 
-        // Start the game
-        await startGame();
+        // Start based on mode
+        if (config.mode === 'tournament') {
+            await runTournament();
+        } else {
+            await startGame();
+        }
 
     } catch (error) {
         console.error('Error starting battle:', error);
@@ -376,6 +526,17 @@ resetBtn.addEventListener('click', resetGame);
 backConfigBtn.addEventListener('click', () => {
     stopPolling();
     showConfigScreen();
+});
+
+// Mode selection toggle
+modeRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        if (e.target.value === 'tournament') {
+            tournamentSettingsSection.style.display = 'block';
+        } else {
+            tournamentSettingsSection.style.display = 'none';
+        }
+    });
 });
 
 // Initialize on page load
