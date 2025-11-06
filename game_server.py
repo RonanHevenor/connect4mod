@@ -106,6 +106,11 @@ AI_PLAYERS = {
     }
 }
 
+# Game settings
+GAME_SETTINGS = {
+    "move_delay": 1.5
+}
+
 @app.route('/')
 def index():
     """Serve the main game page"""
@@ -124,6 +129,43 @@ def reset_game():
     with game_lock:
         game = Connect4Game()
     return jsonify({"success": True})
+
+@app.route('/api/config', methods=['POST'])
+def update_config():
+    """Update AI player configuration and game settings"""
+    global AI_PLAYERS, GAME_SETTINGS
+    try:
+        data = request.json
+
+        # Update player 1 config
+        if 'player1' in data:
+            AI_PLAYERS[1].update({
+                "name": data['player1'].get('name', AI_PLAYERS[1]['name']),
+                "url": data['player1'].get('url', AI_PLAYERS[1]['url']),
+                "color": data['player1'].get('color', AI_PLAYERS[1]['color'])
+            })
+
+        # Update player 2 config
+        if 'player2' in data:
+            AI_PLAYERS[2].update({
+                "name": data['player2'].get('name', AI_PLAYERS[2]['name']),
+                "url": data['player2'].get('url', AI_PLAYERS[2]['url']),
+                "color": data['player2'].get('color', AI_PLAYERS[2]['color'])
+            })
+
+        # Update move delay
+        if 'moveDelay' in data:
+            GAME_SETTINGS['move_delay'] = float(data['moveDelay'])
+
+        print(f"Configuration updated:")
+        print(f"  Player 1: {AI_PLAYERS[1]['name']} @ {AI_PLAYERS[1]['url']}")
+        print(f"  Player 2: {AI_PLAYERS[2]['name']} @ {AI_PLAYERS[2]['url']}")
+        print(f"  Move Delay: {GAME_SETTINGS['move_delay']}s")
+
+        return jsonify({"success": True})
+    except Exception as e:
+        print(f"Error updating config: {e}")
+        return jsonify({"success": False, "error": str(e)}), 400
 
 @app.route('/api/start', methods=['POST'])
 def start_game():
@@ -217,8 +259,8 @@ def play_game_loop():
                 # Switch player
                 game.current_player = 3 - current_player  # Switches between 1 and 2
 
-        # Delay for visualization (1 second between moves)
-        time.sleep(1.5)
+        # Delay for visualization (configurable)
+        time.sleep(GAME_SETTINGS['move_delay'])
 
     print("\nGame over!")
 
