@@ -81,30 +81,34 @@
                 </div>
             </div>
 
-            <div class="game-board-container">
-                <div id="game-board" class="game-board"></div>
-            </div>
-
-            <div class="game-info">
-                <div class="info-item">
-                    <span class="info-label">Status</span>
-                    <span id="game-status" class="info-value">Ready</span>
+            <div class="game-main">
+                <div class="game-board-container">
+                    <div id="game-board" class="game-board"></div>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">Moves</span>
-                    <span id="move-count" class="info-value">0</span>
+
+                <div class="game-sidebar">
+                    <div class="game-info">
+                        <div class="info-item">
+                            <span class="info-label">Status</span>
+                            <span id="game-status" class="info-value">Ready</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Moves</span>
+                            <span id="move-count" class="info-value">0</span>
+                        </div>
+                    </div>
+
+                    <div class="game-controls">
+                        <button id="new-game-btn" class="btn btn-secondary">New Game</button>
+                        <button id="reset-btn" class="btn btn-secondary">Reset</button>
+                        <button id="back-config-btn" class="btn btn-secondary">Configure</button>
+                    </div>
+
+                    <div class="move-history-container">
+                        <div class="move-history-title">Move History</div>
+                        <div id="move-history" class="move-history"></div>
+                    </div>
                 </div>
-            </div>
-
-            <div class="game-controls">
-                <button id="new-game-btn" class="btn btn-secondary">New Game</button>
-                <button id="reset-btn" class="btn btn-secondary">Reset</button>
-                <button id="back-config-btn" class="btn btn-secondary">Configure</button>
-            </div>
-
-            <div class="move-history-container">
-                <div class="move-history-title">Move History</div>
-                <div id="move-history" class="move-history"></div>
             </div>
         </div>
     </div>
