@@ -153,17 +153,17 @@ function updateGameStatus(state) {
     if (state.game_over) {
         if (state.winner) {
             const winnerName = state.winner === 1 ? config.player1.name : config.player2.name;
-            gameStatus.textContent = `🎉 ${winnerName} Wins!`;
-            gameStatus.style.color = state.winner === 1 ? config.player1.color : config.player2.color;
+            gameStatus.textContent = `${winnerName} wins`;
+            gameStatus.style.color = '#333';
         } else {
-            gameStatus.textContent = '🤝 Draw!';
-            gameStatus.style.color = '#FFD700';
+            gameStatus.textContent = 'Draw';
+            gameStatus.style.color = '#333';
         }
         stopPolling();
     } else {
         const currentPlayerName = state.current_player === 1 ? config.player1.name : config.player2.name;
         gameStatus.textContent = `${currentPlayerName}'s turn`;
-        gameStatus.style.color = '#fff';
+        gameStatus.style.color = '#333';
     }
 
     moveCount.textContent = state.move_history ? state.move_history.length : 0;
@@ -191,32 +191,32 @@ function updateMoveHistory(state) {
 
 // Update player status indicators
 function updatePlayerStatus(state) {
-    const player1Card = document.querySelector('.player-card.player1');
-    const player2Card = document.querySelector('.player-card.player2');
+    const player1Info = document.querySelector('.scoreboard .player-info:first-child');
+    const player2Info = document.querySelector('.scoreboard .player-info:last-child');
 
-    if (!player1Card || !player2Card) return;
+    if (!player1Info || !player2Info) return;
 
     // Remove active class
-    player1Card.classList.remove('active');
-    player2Card.classList.remove('active');
+    player1Info.classList.remove('active');
+    player2Info.classList.remove('active');
 
     if (!state.game_over) {
         if (state.current_player === 1) {
-            player1Card.classList.add('active');
-            player1Status.textContent = 'Thinking...';
+            player1Info.classList.add('active');
+            player1Status.textContent = 'Thinking';
             player2Status.textContent = 'Waiting';
         } else {
-            player2Card.classList.add('active');
+            player2Info.classList.add('active');
             player1Status.textContent = 'Waiting';
-            player2Status.textContent = 'Thinking...';
+            player2Status.textContent = 'Thinking';
         }
     } else {
         if (state.winner === 1) {
-            player1Status.textContent = '🏆 Winner!';
+            player1Status.textContent = 'Winner';
             player2Status.textContent = 'Lost';
         } else if (state.winner === 2) {
             player1Status.textContent = 'Lost';
-            player2Status.textContent = '🏆 Winner!';
+            player2Status.textContent = 'Winner';
         } else {
             player1Status.textContent = 'Draw';
             player2Status.textContent = 'Draw';
@@ -275,7 +275,7 @@ async function sendConfigToServer() {
 async function startBattle() {
     try {
         startBattleBtn.disabled = true;
-        startBattleBtn.textContent = '🔄 Initializing...';
+        startBattleBtn.textContent = 'Initializing...';
 
         // Save configuration
         saveConfig();
@@ -298,10 +298,10 @@ async function startBattle() {
 
     } catch (error) {
         console.error('Error starting battle:', error);
-        alert('Failed to start battle. Make sure AI players are running!');
+        alert('Failed to start battle. Make sure AI players are running.');
     } finally {
         startBattleBtn.disabled = false;
-        startBattleBtn.textContent = '🚀 Start Battle';
+        startBattleBtn.textContent = 'Start Battle';
     }
 }
 
@@ -318,8 +318,8 @@ async function startGame() {
         if (response.ok) {
             // Clear move history
             moveHistory.innerHTML = '';
-            gameStatus.textContent = 'Game starting...';
-            gameStatus.style.color = '#fff';
+            gameStatus.textContent = 'Starting';
+            gameStatus.style.color = '#333';
 
             // Start polling for updates
             startPolling();
@@ -327,11 +327,11 @@ async function startGame() {
             // Fetch initial state
             await fetchGameState();
         } else {
-            alert('Failed to start game. Check that AI players are running!');
+            alert('Failed to start game. Check that AI players are running.');
         }
     } catch (error) {
         console.error('Error starting game:', error);
-        alert('Failed to start game. Make sure AI players are running!');
+        alert('Failed to start game. Make sure AI players are running.');
     } finally {
         setTimeout(() => {
             newGameBtn.disabled = false;
@@ -350,17 +350,17 @@ async function resetGame() {
 
         if (response.ok) {
             moveHistory.innerHTML = '';
-            gameStatus.textContent = 'Ready to start';
-            gameStatus.style.color = '#fff';
+            gameStatus.textContent = 'Ready';
+            gameStatus.style.color = '#333';
             moveCount.textContent = '0';
-            player1Status.textContent = 'Waiting...';
-            player2Status.textContent = 'Waiting...';
+            player1Status.textContent = 'Waiting';
+            player2Status.textContent = 'Waiting';
 
-            const player1Card = document.querySelector('.player-card.player1');
-            const player2Card = document.querySelector('.player-card.player2');
+            const player1Info = document.querySelector('.scoreboard .player-info:first-child');
+            const player2Info = document.querySelector('.scoreboard .player-info:last-child');
 
-            if (player1Card) player1Card.classList.remove('active');
-            if (player2Card) player2Card.classList.remove('active');
+            if (player1Info) player1Info.classList.remove('active');
+            if (player2Info) player2Info.classList.remove('active');
 
             await fetchGameState();
         }

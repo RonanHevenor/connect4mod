@@ -251,10 +251,10 @@ def play_game_loop():
             if winner:
                 game.winner = winner
                 game.game_over = True
-                print(f"\n🎉 Player {winner} ({AI_PLAYERS[winner]['name']}) wins!")
+                print(f"\nPlayer {winner} ({AI_PLAYERS[winner]['name']}) wins!")
             elif game.is_board_full():
                 game.game_over = True
-                print("\n🤝 Game is a draw!")
+                print("\nGame is a draw!")
             else:
                 # Switch player
                 game.current_player = 3 - current_player  # Switches between 1 and 2
@@ -265,12 +265,12 @@ def play_game_loop():
     print("\nGame over!")
 
 if __name__ == '__main__':
-    print("🎮 Connect 4 AI Battle Server")
+    print("Connect 4 AI Battle Server")
     print("=" * 50)
     print(f"Player 1: {AI_PLAYERS[1]['name']} - {AI_PLAYERS[1]['url']}")
     print(f"Player 2: {AI_PLAYERS[2]['name']} - {AI_PLAYERS[2]['url']}")
     print("=" * 50)
     print("\nStarting server on http://localhost:5000")
-    print("Open your browser and click 'Start Game' to begin!\n")
+    print("Open your browser to begin\n")
 
     app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)

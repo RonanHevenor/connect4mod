@@ -36,7 +36,7 @@ def get_move():
         # Random strategy: pick a random valid column
         column = random.choice(valid_moves)
 
-        print(f"🤖 Random AI (Player {player}): Choosing column {column}")
+        print(f"Random AI (Player {player}): Choosing column {column}")
 
         return jsonify({"column": column})
 
@@ -50,7 +50,7 @@ def health():
     return jsonify({"status": "healthy", "name": "Random AI"})
 
 if __name__ == '__main__':
-    print("🤖 Random AI Player Starting...")
+    print("Random AI Player")
     print("Listening on http://localhost:5001")
     print("Strategy: Randomly selects from valid moves\n")
     app.run(host='0.0.0.0', port=5001, debug=False)

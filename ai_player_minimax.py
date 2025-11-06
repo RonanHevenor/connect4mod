@@ -227,7 +227,7 @@ def get_move():
         if column is None:
             column = 3 if 3 in valid_moves else valid_moves[0]
 
-        print(f"🧠 Minimax AI (Player {player}): Choosing column {column}")
+        print(f"Minimax AI (Player {player}): Choosing column {column}")
 
         return jsonify({"column": column})
 
@@ -243,7 +243,7 @@ def health():
     return jsonify({"status": "healthy", "name": "Minimax AI"})
 
 if __name__ == '__main__':
-    print("🧠 Minimax AI Player Starting...")
+    print("Minimax AI Player")
     print("Listening on http://localhost:5002")
     print("Strategy: Minimax algorithm with alpha-beta pruning (depth=4)\n")
     app.run(host='0.0.0.0', port=5002, debug=False)
