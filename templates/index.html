@@ -139,42 +139,36 @@
 
         <!-- Tournament Screen -->
         <div id="tournament-screen" class="screen">
-            <div class="tournament-layout">
-                <div class="tournament-matchup">
-                    <div class="tournament-player-card left">
-                        <div class="player-card-wins" id="tournament-player1-wins">0</div>
-                        <div class="player-card-name" id="tournament-player1-name">Random AI</div>
+            <div class="tournament-simple">
+                <div class="tournament-header-simple">
+                    <div class="tournament-score-box">
+                        <div class="score-number" id="tournament-player1-wins">0</div>
+                        <div class="score-label" id="tournament-player1-name">Player 1</div>
                     </div>
-
-                    <div class="tournament-center">
-                        <div class="tournament-vs-large">VS</div>
-                        <div class="tournament-progress-large" id="tournament-progress-text">Game 0 of 0</div>
+                    <div class="tournament-middle">
+                        <div id="tournament-progress-text">Game 0 of 0</div>
+                        <div id="tournament-status-text">Ready</div>
                     </div>
-
-                    <div class="tournament-player-card right">
-                        <div class="player-card-wins" id="tournament-player2-wins">0</div>
-                        <div class="player-card-name" id="tournament-player2-name">Minimax AI</div>
+                    <div class="tournament-score-box">
+                        <div class="score-number" id="tournament-player2-wins">0</div>
+                        <div class="score-label" id="tournament-player2-name">Player 2</div>
                     </div>
                 </div>
 
-                <div class="tournament-bar-section">
-                    <div class="election-bar-mega">
-                        <div class="election-bar-left" id="tournament-election-left">
-                            <span class="election-bar-percent" id="tournament-election-left-percent">0%</span>
-                        </div>
-                        <div class="election-bar-divider"></div>
-                        <div class="election-bar-right" id="tournament-election-right">
-                            <span class="election-bar-percent" id="tournament-election-right-percent">0%</span>
-                        </div>
+                <div class="tournament-bar-simple">
+                    <div class="bar-left" id="tournament-election-left">
+                        <span id="tournament-election-left-percent">0%</span>
                     </div>
-                    <div class="tournament-status-text" id="tournament-status-text">Preparing tournament...</div>
+                    <div class="bar-right" id="tournament-election-right">
+                        <span id="tournament-election-right-percent">0%</span>
+                    </div>
                 </div>
 
-                <div class="tournament-pit">
+                <div class="tournament-canvas-area">
                     <canvas id="ball-pit-canvas"></canvas>
                 </div>
 
-                <button id="tournament-back-btn" class="tournament-exit-btn">✕</button>
+                <button id="tournament-back-btn" class="back-btn-simple">Back to Config</button>
             </div>
         </div>
     </div>

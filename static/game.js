@@ -337,10 +337,8 @@ function updatePlayerColors() {
         }
         .move-item.player1 { border-left-color: ${config.player1.color} !important; }
         .move-item.player2 { border-left-color: ${config.player2.color} !important; }
-        .election-left { background: ${config.player1.color} !important; }
-        .election-right { background: ${config.player2.color} !important; }
-        .election-bar-left { background: ${config.player1.color} !important; }
-        .election-bar-right { background: ${config.player2.color} !important; }
+        .bar-left { background: ${config.player1.color} !important; }
+        .bar-right { background: ${config.player2.color} !important; }
     `;
     document.head.appendChild(style);
 }
