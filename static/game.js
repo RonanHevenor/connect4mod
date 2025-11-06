@@ -34,6 +34,7 @@ let tournamentState = {
 // DOM Elements - Screens
 const configScreen = document.getElementById('config-screen');
 const gameScreen = document.getElementById('game-screen');
+const tournamentScreen = document.getElementById('tournament-screen');
 
 // DOM Elements - Config
 const startBattleBtn = document.getElementById('start-battle-btn');
@@ -62,7 +63,7 @@ const player2Status = document.getElementById('player2-status');
 const player1DisplayName = document.getElementById('player1-display-name');
 const player2DisplayName = document.getElementById('player2-display-name');
 
-// DOM Elements - Tournament
+// DOM Elements - Tournament (old bar - now used in game screen)
 const tournamentBar = document.getElementById('tournament-bar');
 const electionLeft = document.getElementById('election-left');
 const electionRight = document.getElementById('election-right');
@@ -72,17 +73,233 @@ const tournamentProgress = document.getElementById('tournament-progress');
 const player1Balls = document.getElementById('player1-balls');
 const player2Balls = document.getElementById('player2-balls');
 
+// DOM Elements - Tournament Screen
+const tournamentPlayer1Name = document.getElementById('tournament-player1-name');
+const tournamentPlayer2Name = document.getElementById('tournament-player2-name');
+const tournamentPlayer1Wins = document.getElementById('tournament-player1-wins');
+const tournamentPlayer2Wins = document.getElementById('tournament-player2-wins');
+const tournamentStatusText = document.getElementById('tournament-status-text');
+const tournamentElectionLeft = document.getElementById('tournament-election-left');
+const tournamentElectionRight = document.getElementById('tournament-election-right');
+const tournamentElectionLeftPercent = document.getElementById('tournament-election-left-percent');
+const tournamentElectionRightPercent = document.getElementById('tournament-election-right-percent');
+const tournamentProgressText = document.getElementById('tournament-progress-text');
+const tournamentBackBtn = document.getElementById('tournament-back-btn');
+const ballPitCanvas = document.getElementById('ball-pit-canvas');
+
 // Screen Management
 function showConfigScreen() {
     configScreen.classList.add('active');
     gameScreen.classList.remove('active');
+    tournamentScreen.classList.remove('active');
     stopPolling();
+    stopBallPitPhysics();
 }
 
 function showGameScreen() {
     configScreen.classList.remove('active');
     gameScreen.classList.add('active');
+    tournamentScreen.classList.remove('active');
+    stopBallPitPhysics();
 }
+
+function showTournamentScreen() {
+    configScreen.classList.remove('active');
+    gameScreen.classList.remove('active');
+    tournamentScreen.classList.add('active');
+    initBallPitCanvas();
+    startBallPitPhysics();
+}
+
+// ============================================================================
+// BALL PIT PHYSICS SIMULATION
+// ============================================================================
+
+// Physics constants
+const GRAVITY = 0.5;
+const FRICTION = 0.99;
+const BOUNCE_DAMPING = 0.8;
+const BALL_RADIUS = 15;
+
+// Physics state
+let balls = [];
+let ctx = null;
+let canvasWidth = 0;
+let canvasHeight = 0;
+let physicsAnimationId = null;
+
+// Ball class
+class Ball {
+    constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 4; // Random horizontal velocity
+        this.vy = 0; // Start with no vertical velocity
+        this.radius = BALL_RADIUS;
+        this.color = color;
+    }
+
+    update() {
+        // Apply gravity
+        this.vy += GRAVITY;
+
+        // Apply friction
+        this.vx *= FRICTION;
+        this.vy *= FRICTION;
+
+        // Update position
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // Wall collisions
+        if (this.x - this.radius < 0) {
+            this.x = this.radius;
+            this.vx *= -BOUNCE_DAMPING;
+        }
+        if (this.x + this.radius > canvasWidth) {
+            this.x = canvasWidth - this.radius;
+            this.vx *= -BOUNCE_DAMPING;
+        }
+
+        // Floor collision
+        if (this.y + this.radius > canvasHeight) {
+            this.y = canvasHeight - this.radius;
+            this.vy *= -BOUNCE_DAMPING;
+
+            // Stop tiny bounces
+            if (Math.abs(this.vy) < 0.5) {
+                this.vy = 0;
+            }
+        }
+
+        // Ceiling collision (shouldn't happen but just in case)
+        if (this.y - this.radius < 0) {
+            this.y = this.radius;
+            this.vy *= -BOUNCE_DAMPING;
+        }
+    }
+
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+
+        // Add subtle shadow/depth
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+}
+
+// Check collision between two balls
+function checkBallCollision(ball1, ball2) {
+    const dx = ball2.x - ball1.x;
+    const dy = ball2.y - ball1.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const minDistance = ball1.radius + ball2.radius;
+
+    if (distance < minDistance) {
+        // Collision detected - calculate response
+        const angle = Math.atan2(dy, dx);
+        const targetX = ball1.x + Math.cos(angle) * minDistance;
+        const targetY = ball1.y + Math.sin(angle) * minDistance;
+
+        // Separate balls
+        const ax = (targetX - ball2.x) * 0.5;
+        const ay = (targetY - ball2.y) * 0.5;
+
+        ball1.x -= ax;
+        ball1.y -= ay;
+        ball2.x += ax;
+        ball2.y += ay;
+
+        // Exchange velocities (simplified elastic collision)
+        const tempVx = ball1.vx;
+        const tempVy = ball1.vy;
+        ball1.vx = ball2.vx * BOUNCE_DAMPING;
+        ball1.vy = ball2.vy * BOUNCE_DAMPING;
+        ball2.vx = tempVx * BOUNCE_DAMPING;
+        ball2.vy = tempVy * BOUNCE_DAMPING;
+    }
+}
+
+// Initialize canvas
+function initBallPitCanvas() {
+    if (!ballPitCanvas) return;
+
+    ctx = ballPitCanvas.getContext('2d');
+
+    // Set canvas size to match container
+    const container = ballPitCanvas.parentElement;
+    canvasWidth = container.clientWidth;
+    canvasHeight = container.clientHeight;
+    ballPitCanvas.width = canvasWidth;
+    ballPitCanvas.height = canvasHeight;
+
+    // Clear balls array
+    balls = [];
+}
+
+// Physics update loop
+function updatePhysics() {
+    if (!ctx) return;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+    // Update all balls
+    balls.forEach(ball => ball.update());
+
+    // Check ball-to-ball collisions
+    for (let i = 0; i < balls.length; i++) {
+        for (let j = i + 1; j < balls.length; j++) {
+            checkBallCollision(balls[i], balls[j]);
+        }
+    }
+
+    // Draw all balls
+    balls.forEach(ball => ball.draw());
+
+    // Continue animation loop
+    physicsAnimationId = requestAnimationFrame(updatePhysics);
+}
+
+// Start physics simulation
+function startBallPitPhysics() {
+    if (!physicsAnimationId) {
+        physicsAnimationId = requestAnimationFrame(updatePhysics);
+    }
+}
+
+// Stop physics simulation
+function stopBallPitPhysics() {
+    if (physicsAnimationId) {
+        cancelAnimationFrame(physicsAnimationId);
+        physicsAnimationId = null;
+    }
+}
+
+// Add a ball to the pit
+function addBallToPitCanvas(player) {
+    if (!ctx) return;
+
+    const color = player === 1 ? config.player1.color : config.player2.color;
+
+    // Spawn ball at random x position near top
+    const x = canvasWidth * 0.3 + Math.random() * canvasWidth * 0.4;
+    const y = BALL_RADIUS;
+
+    const ball = new Ball(x, y, color);
+    balls.push(ball);
+}
+
+// Handle canvas resize
+window.addEventListener('resize', () => {
+    if (tournamentScreen.classList.contains('active')) {
+        initBallPitCanvas();
+    }
+});
 
 // Save configuration from form
 function saveConfig() {
@@ -132,6 +349,8 @@ function updatePlayerColors() {
         .move-item.player2 { border-left-color: ${config.player2.color} !important; }
         .election-left { background: ${config.player1.color} !important; }
         .election-right { background: ${config.player2.color} !important; }
+        .election-bar-left { background: ${config.player1.color} !important; }
+        .election-bar-right { background: ${config.player2.color} !important; }
     `;
     document.head.appendChild(style);
 }
@@ -145,51 +364,50 @@ function initTournament() {
     tournamentState.wins.player2 = 0;
     tournamentState.wins.draws = 0;
 
-    // Show tournament bar
-    tournamentBar.style.display = 'flex';
+    // Update tournament screen with player names
+    tournamentPlayer1Name.textContent = config.player1.name;
+    tournamentPlayer2Name.textContent = config.player2.name;
 
-    // Clear ball pits
-    player1Balls.innerHTML = '';
-    player2Balls.innerHTML = '';
+    // Reset win counts
+    tournamentPlayer1Wins.textContent = '0 wins';
+    tournamentPlayer2Wins.textContent = '0 wins';
+
+    // Reset status
+    tournamentStatusText.textContent = 'Preparing tournament...';
 
     // Reset election bar
-    updateElectionBar();
-    updateTournamentProgress();
+    updateTournamentElectionBar();
+    updateTournamentProgressText();
 }
 
-function addBallToPit(player) {
-    const ball = document.createElement('div');
-    ball.className = 'ball';
-    ball.style.background = player === 1 ? config.player1.color : config.player2.color;
-
-    if (player === 1) {
-        player1Balls.appendChild(ball);
-    } else {
-        player2Balls.appendChild(ball);
-    }
-}
-
-function updateElectionBar() {
+// Update tournament screen election bar
+function updateTournamentElectionBar() {
     const total = tournamentState.wins.player1 + tournamentState.wins.player2 + tournamentState.wins.draws;
     if (total === 0) {
-        electionLeft.style.width = '0%';
-        electionRight.style.width = '0%';
-        electionLeftPercent.textContent = '0%';
-        electionRightPercent.textContent = '0%';
+        tournamentElectionLeft.style.width = '0%';
+        tournamentElectionRight.style.width = '0%';
+        tournamentElectionLeftPercent.textContent = '0%';
+        tournamentElectionRightPercent.textContent = '0%';
         return;
     }
 
     const player1Percent = (tournamentState.wins.player1 / total) * 100;
     const player2Percent = (tournamentState.wins.player2 / total) * 100;
 
-    electionLeft.style.width = player1Percent + '%';
-    electionRight.style.width = player2Percent + '%';
-    electionLeftPercent.textContent = Math.round(player1Percent) + '%';
-    electionRightPercent.textContent = Math.round(player2Percent) + '%';
+    tournamentElectionLeft.style.width = player1Percent + '%';
+    tournamentElectionRight.style.width = player2Percent + '%';
+    tournamentElectionLeftPercent.textContent = Math.round(player1Percent) + '%';
+    tournamentElectionRightPercent.textContent = Math.round(player2Percent) + '%';
+
+    // Update win count displays
+    const player1WinText = tournamentState.wins.player1 === 1 ? '1 win' : `${tournamentState.wins.player1} wins`;
+    const player2WinText = tournamentState.wins.player2 === 1 ? '1 win' : `${tournamentState.wins.player2} wins`;
+    tournamentPlayer1Wins.textContent = player1WinText;
+    tournamentPlayer2Wins.textContent = player2WinText;
 }
 
-function updateTournamentProgress() {
-    tournamentProgress.textContent = `Game ${tournamentState.currentGame} of ${tournamentState.totalGames}`;
+function updateTournamentProgressText() {
+    tournamentProgressText.textContent = `Game ${tournamentState.currentGame} of ${tournamentState.totalGames}`;
 }
 
 async function runTournament() {
@@ -197,7 +415,8 @@ async function runTournament() {
 
     for (let i = 1; i <= config.numGames; i++) {
         tournamentState.currentGame = i;
-        updateTournamentProgress();
+        updateTournamentProgressText();
+        tournamentStatusText.textContent = `Game ${i} in progress...`;
 
         // Start game
         await startGame();
@@ -205,29 +424,31 @@ async function runTournament() {
         // Wait for game to complete
         await waitForGameComplete();
 
-        // Record result
+        // Record result and add ball to pit
         if (gameState.winner === 1) {
             tournamentState.wins.player1++;
-            addBallToPit(1);
+            addBallToPitCanvas(1);
         } else if (gameState.winner === 2) {
             tournamentState.wins.player2++;
-            addBallToPit(2);
+            addBallToPitCanvas(2);
         } else {
             tournamentState.wins.draws++;
+            // For draws, could add a different colored ball or skip
         }
 
         // Update election bar
-        updateElectionBar();
+        updateTournamentElectionBar();
 
         // Wait interval before next game (except on last game)
         if (i < config.numGames) {
+            tournamentStatusText.textContent = `Next game in ${config.gameInterval} seconds...`;
             await new Promise(resolve => setTimeout(resolve, config.gameInterval * 1000));
         }
     }
 
     // Tournament complete
     tournamentState.active = false;
-    gameStatus.textContent = 'Tournament Complete';
+    tournamentStatusText.textContent = 'Tournament Complete!';
 }
 
 function waitForGameComplete() {
@@ -433,16 +654,13 @@ async function startBattle() {
             return;
         }
 
-        // Switch to game screen
-        showGameScreen();
-
-        // Initialize board
-        initBoard();
-
-        // Start based on mode
+        // Switch to appropriate screen based on mode
         if (config.mode === 'tournament') {
+            showTournamentScreen();
             await runTournament();
         } else {
+            showGameScreen();
+            initBoard();
             await startGame();
         }
 
@@ -524,6 +742,10 @@ startBattleBtn.addEventListener('click', startBattle);
 newGameBtn.addEventListener('click', startGame);
 resetBtn.addEventListener('click', resetGame);
 backConfigBtn.addEventListener('click', () => {
+    stopPolling();
+    showConfigScreen();
+});
+tournamentBackBtn.addEventListener('click', () => {
     stopPolling();
     showConfigScreen();
 });

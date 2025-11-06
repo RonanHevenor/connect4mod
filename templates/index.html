@@ -87,42 +87,19 @@
             </div>
         </div>
 
-        <!-- Game Screen -->
+        <!-- Single Game Screen -->
         <div id="game-screen" class="screen">
             <header>
                 <h1 class="title">Connect 4 AI Battle</h1>
-
-                <!-- Tournament Bar (hidden in single game mode) -->
-                <div id="tournament-bar" class="tournament-bar" style="display: none;">
-                    <div class="election-container">
-                        <div class="election-bar">
-                            <div class="election-left" id="election-left">
-                                <span class="election-percent" id="election-left-percent">0%</span>
-                            </div>
-                            <div class="election-center"></div>
-                            <div class="election-right" id="election-right">
-                                <span class="election-percent" id="election-right-percent">0%</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tournament-info">
-                        <span id="tournament-progress">Game 0 of 0</span>
-                    </div>
-                </div>
-
                 <div class="scoreboard">
                     <div class="player-info">
                         <div class="player-name" id="player1-display-name">Random AI</div>
                         <div class="player-status" id="player1-status">Waiting</div>
-                        <!-- Ball pit for wins -->
-                        <div class="ball-pit" id="player1-balls"></div>
                     </div>
                     <div class="vs">vs</div>
                     <div class="player-info">
                         <div class="player-name" id="player2-display-name">Minimax AI</div>
                         <div class="player-status" id="player2-status">Waiting</div>
-                        <!-- Ball pit for wins -->
-                        <div class="ball-pit" id="player2-balls"></div>
                     </div>
                 </div>
             </header>
@@ -157,6 +134,49 @@
                         <div id="move-history" class="move-history"></div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Tournament Screen -->
+        <div id="tournament-screen" class="screen">
+            <div class="tournament-header">
+                <div class="tournament-players">
+                    <div class="tournament-player">
+                        <div class="tournament-player-name" id="tournament-player1-name">Random AI</div>
+                        <div class="tournament-player-wins" id="tournament-player1-wins">0 wins</div>
+                    </div>
+                    <div class="tournament-vs">VS</div>
+                    <div class="tournament-player">
+                        <div class="tournament-player-name" id="tournament-player2-name">Minimax AI</div>
+                        <div class="tournament-player-wins" id="tournament-player2-wins">0 wins</div>
+                    </div>
+                </div>
+                <div class="tournament-status">
+                    <span id="tournament-status-text">Preparing tournament...</span>
+                </div>
+            </div>
+
+            <div class="tournament-election">
+                <div class="election-bar-large">
+                    <div class="election-bar-left" id="tournament-election-left">
+                        <span class="election-bar-percent" id="tournament-election-left-percent">0%</span>
+                    </div>
+                    <div class="election-bar-center"></div>
+                    <div class="election-bar-right" id="tournament-election-right">
+                        <span class="election-bar-percent" id="tournament-election-right-percent">0%</span>
+                    </div>
+                </div>
+                <div class="election-progress">
+                    <span id="tournament-progress-text">Game 0 of 0</span>
+                </div>
+            </div>
+
+            <div class="tournament-ball-pit-container">
+                <canvas id="ball-pit-canvas"></canvas>
+            </div>
+
+            <div class="tournament-controls">
+                <button id="tournament-back-btn" class="btn btn-secondary">Back to Config</button>
             </div>
         </div>
     </div>
