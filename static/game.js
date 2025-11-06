@@ -359,8 +359,8 @@ function initTournament() {
     tournamentPlayer2Name.textContent = config.player2.name;
 
     // Reset win counts
-    tournamentPlayer1Wins.textContent = '0 wins';
-    tournamentPlayer2Wins.textContent = '0 wins';
+    tournamentPlayer1Wins.textContent = '0';
+    tournamentPlayer2Wins.textContent = '0';
 
     // Reset status
     tournamentStatusText.textContent = 'Preparing tournament...';
@@ -389,11 +389,9 @@ function updateTournamentElectionBar() {
     tournamentElectionLeftPercent.textContent = Math.round(player1Percent) + '%';
     tournamentElectionRightPercent.textContent = Math.round(player2Percent) + '%';
 
-    // Update win count displays
-    const player1WinText = tournamentState.wins.player1 === 1 ? '1 win' : `${tournamentState.wins.player1} wins`;
-    const player2WinText = tournamentState.wins.player2 === 1 ? '1 win' : `${tournamentState.wins.player2} wins`;
-    tournamentPlayer1Wins.textContent = player1WinText;
-    tournamentPlayer2Wins.textContent = player2WinText;
+    // Update win count displays (just the numbers)
+    tournamentPlayer1Wins.textContent = tournamentState.wins.player1.toString();
+    tournamentPlayer2Wins.textContent = tournamentState.wins.player2.toString();
 }
 
 function updateTournamentProgressText() {
